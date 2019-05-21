@@ -250,10 +250,14 @@ router.post('/articleservice', VerifyToken, async function(req, res) {
           );
 
           // Re-query the metadata for new file info
-          mobileMetadata = await audioHelper.getMobileMetadataForLocale(
-            req.body.article_id,
-            voice.localeSynthesis
-          );
+          if (voice.localeSynthesis) {
+            mobileMetadata = await audioHelper.getMobileMetadataForLocale(
+              req.body.article_id,
+              voice.localeSynthesis
+            );
+          } else {
+            mobileMetadata = await database.getMobileMetadata(req.body.article_id);
+          }
           logger.debug('mobilemetadata is: ' + mobileMetadata);
           let response = await buildPocketResponseFromMetadata(
             mobileMetadata,
